@@ -28,5 +28,5 @@ A module's developer uses each part of a module's version number to signal the v
 ### [Go Modules Reference](https://github.com/golang/website/blob/master/_content/doc/mod.md)
 A detailed reference manual for Go's dependency management system.
 
-## [go.mod file reference](https://github.com/golang/website/blob/master/_content/doc/modules/gomod-ref.md)
+### [go.mod file reference](https://github.com/golang/website/blob/master/_content/doc/modules/gomod-ref.md)
 Reference for the directives included in a go.mod file.

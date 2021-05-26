@@ -110,16 +110,16 @@ go list -m -json example.com/mod@abcd1234
 
 例えば、`go`コマンドが`golang.org/x/net/html`というパッケージを提供するモジュールを探していて、`GOPROXY`に`https://corp.example.com,https://proxy.golang.org`が設定されているとします。`go`コマンドは以下のようにリクエストを行うでしょう。
 
-- `https://corp.example.com/`に（並列に）リクエストを行う
-  - `golang.org/x/net/html`の最新バージョンをリクエストする
-  - `golang.org/x/net`の最新バージョンをリクエストする
-  - `golang.org/x`の最新バージョンをリクエストする
-  - `golang.org`の最新バージョンをリクエストする
-- `https://corp.example.com/`へのリクエストが全て404または410エラーの場合、`https://proxy.golang.org/`にリクエストを行う
-  - `golang.org/x/net/html`の最新バージョンをリクエストする
-  - `golang.org/x/net`の最新バージョンをリクエストする
-  - `golang.org/x`の最新バージョンをリクエストする
-  - `golang.org`の最新バージョンをリクエストする
+1. `https://corp.example.com/`に（並列に）リクエストを行う
+  1. `golang.org/x/net/html`の最新バージョンをリクエストする
+  1. `golang.org/x/net`の最新バージョンをリクエストする
+  1. `golang.org/x`の最新バージョンをリクエストする
+  1. `golang.org`の最新バージョンをリクエストする
+1. `https://corp.example.com/`へのリクエストが全て404または410エラーの場合、`https://proxy.golang.org/`にリクエストを行う
+  1. `golang.org/x/net/html`の最新バージョンをリクエストする
+  1. `golang.org/x/net`の最新バージョンをリクエストする
+  1. `golang.org/x`の最新バージョンをリクエストする
+  1. `golang.org`の最新バージョンをリクエストする
 
 適切なモジュールが見つかると、`go`コマンドは新しいモジュールのパスとバージョンを含む新しい[requirement](https://golang.org/ref/mod#go-mod-file-require)をメインモジュール`go.mod`ファイルに追加します。これにより、将来同じパッケージがロードされたときに、同じモジュールが同じバージョンで使用されるようになります。解決されたパッケージが、メインモジュールのパッケージによってインポートされていない場合、新しい`require`のモジュールには`// indirect`コメントがつきます。
 

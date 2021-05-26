@@ -8,7 +8,7 @@
 
 **モジュール**は一緒にリリース、バージョンコントロール、配布されるパッケージの集合です。モジュールはバージョンコントロールリポジトリから直接ダウンロードしたり、モジュールのプロキシサーバーからダウンロードできます。
 
-モジュールは、[`go.mod`ファイル](https://golang.org/ref/mod#go-mod-file)で宣言された[モジュールパス](https://golang.org/ref/mod#glos-module-path)と、そのモジュールの依存関係に関する情報によって識別されます。**モジュールのルートディレクトリ**は`go.mod`ファイルを含むディレクトリです。**メインモジュール**は`go`コマンドが呼ばれるディレクトリを含むディレクトリです。
+モジュールは、[`go.mod`ファイル](https://golang.org/ref/mod#go-mod-file)で宣言された[モジュールパス](https://golang.org/ref/mod#glos-module-path)と、そのモジュールの依存関係に関する情報によって識別されます。**モジュールルートディレクトリ**は`go.mod`ファイルを含むディレクトリです。**メインモジュール**は`go`コマンドが呼ばれるディレクトリを含むディレクトリです。
 
 モジュール内のそれぞれの**パッケージ**は、同じディレクトリ内にあり一緒にコンパイルされるソースファイルの集合です。**パッケージパス**は、モジュールパスとパッケージを含むサブディレクトリ（モジュールルートからの相対パスになります）です。例えば、モジュール`"golang.org/x/net"`はディレクトリ`"html"`中のパッケージを含みます。そのパッケージパスは`"golang.org/x/net/html"`になります。
 
@@ -67,7 +67,7 @@ Goはバージョンコントロールシステムのモジュールにアクセ
 - ベースバージョンが分かっている疑似バージョンは、そのベースバージョン以上で、かつ後方のプレリリースバージョン以下になります。
 - ベースバージョンのプレフィックスが同じである疑似バージョンは、時系列順にソートされます。
 
-`go`コマンドは、モジュール作者が疑似バージョンと他のバージョンとの比較を制御できることと、疑似バージョンがモジュールのコミット履歴に実際に含まれているリビジョンを参照していることを保証するために、いくつかのチェックを行います。
+`go`コマンドは、モジュール製作者が疑似バージョンと他のバージョンとの比較を制御できることと、疑似バージョンがモジュールのコミット履歴に実際に含まれているリビジョンを参照していることを保証するために、いくつかのチェックを行います。
 
 - ベースバージョンが明示されている場合、対応するセマンティックバージョンタグが存在しなければなりません。そのタグは疑似バージョンに記述されたリビジョンの祖先です。これにより、開発者が`v1.999.999-99999999999999-daa7c04131f5`のようにタグづけされたすべてのバージョン以上の疑似バージョンを使って[minimal version selection](https://golang.org/ref/mod#glos-minimal-version-selection)を回避することを防ぎます。
 - タイムスタンプはリビジョンのタイムスタンプと一致しなければなりません。これにより、攻撃者が[module proxies](https://golang.org/ref/mod#glos-module-proxy)に無制限に同一の疑似バージョンを作ることを防ぎます。また、モジュールの利用者がバージョンの相対的な順序を変更することも防ぎます。
@@ -124,3 +124,75 @@ go list -m -json example.com/mod@abcd1234
 適切なモジュールが見つかると、`go`コマンドは新しいモジュールのパスとバージョンを含む新しい[requirement](https://golang.org/ref/mod#go-mod-file-require)をメインモジュール`go.mod`ファイルに追加します。これにより、将来同じパッケージがロードされたときに、同じモジュールが同じバージョンで使用されるようになります。解決されたパッケージが、メインモジュールのパッケージによってインポートされていない場合、新しい`require`のモジュールには`// indirect`コメントがつきます。
 
 ## `go.mod`ファイル
+
+## 用語集
+
+### ビルド制約（build constraint）
+パッケージのコンパイル時にGoのソースファイルを使用するかどうか決める条件です。ビルド制約は、ファイル名のサフィックス（例: `foo_linux_amd64.go`）や、ビルド制約のコメント（例: `// +build linux,amd64`）で表現されます。[Build Constraints](https://golang.org/pkg/go/build/#hdr-Build_Constraints)をご覧ください。
+
+### ビルドリスト（build list）
+`go build`、`go list`、`go test`などのビルドコマンドで使用されるモジュールのバージョンのリストです。ビルドリストは、[メインモジュール](https://golang.org/ref/mod#glos-main-module)の[`go.mod`ファイル](https://golang.org/ref/mod#glos-go-mod-file)と、[minimal version selection](https://golang.org/ref/mod#glos-minimal-version-selection)を使用して推移的な操作を必要とするモジュール内にある`go.mod`ファイルから決定されます。ビルドリストには、特定のコマンドに関連するモジュールだけでなく、[モジュールグラフ](https://golang.org/ref/mod#glos-module-graph)にある全てのモジュールのバージョンが含まれています。
+
+### 正規のバージョン（canonical version）
+ビルドメタデータのサフィックスが`+incompatible`以外の、正しくフォーマットされたバージョンです。例えば、`v1.2.3`は正規のバージョンですが、`v1.2.3+meta`はそうではありません。
+
+### カレントモジュール（current module）
+[メインモジュール](https://golang.org/ref/mod#glos-main-module)と同義です。
+
+### 非推奨のモジュール（deprecated module）
+製作者によってサポートされなくなったモジュール（ただし、メジャーバージョンはこの目的のために別のモジュールとみなされます）。非推奨のモジュールには、最新版の[`go.mod`ファイル](https://golang.org/ref/mod#glos-go-mod-file)に[非推奨のコメント](https://golang.org/ref/mod#go-mod-file-module-deprecation)がつけられます。
+
+### `go.mod`ファイル（`go.mod` file）
+モジュールのパス、必須のモジュール、その他のメタデータを定義するファイル。[モジュールルートディレクトリ](https://golang.org/ref/mod#glos-module-root-directory)に配置されます。[`go.mod`ファイル](https://golang.org/ref/mod#go-mod-file)の項をご覧ください。
+
+### インポートパス（import path）
+Goのソースファイルでパッケージをインポートするために使われる文字列です。[パッケージパス](https://golang.org/ref/mod#glos-package-path)と同義です。
+
+### メインモジュール（main module）
+`go`コマンドが実行されるモジュールです。メインモジュールは、カレントディレクトリまたは親ディレクトリにある[`go.mod`ファイル](https://golang.org/ref/mod#glos-go-mod-file)で定義されます。[モジュール、パッケージ、バージョン](https://golang.org/ref/mod#modules-overview)をご覧ください。
+
+### メジャーバージョン（major version）
+
+### メジャーバージョンのサブディレクトリ（major version subdirectory）
+
+### メジャーバージョンのサフィックス（major version suffix）
+
+### minimal version selection (MVS)
+
+### マイナーバージョン（minor version）
+
+### モジュール（module）
+
+### モジュールキャッシュ（module cache）
+
+### モジュールグラフ（module graph）
+
+### モジュールパス（module path）
+
+### モジュールプロキシ（module proxy）
+
+### モジュールルートディレクトリ（module root directory）
+
+### モジュールサブディレクトリ（module subdirectory）
+
+### パッケージ（package）
+
+### パッケージパス（package path）
+
+### パッチバージョン（patch version）
+
+### プレリリースバージョン（pre-release version）
+
+### 疑似バージョン（pseudo-version）
+
+### リリースバージョン（release version）
+
+### リポジトリルートパス（repository root path）
+
+### 廃止バージョン（retracted version）
+
+### セマンティックバージョンタグ（semantic version tag）
+
+### ベンダーディレクトリ（vendor direstory）
+
+### バージョン（version）

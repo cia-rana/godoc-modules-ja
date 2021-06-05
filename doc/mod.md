@@ -16,11 +16,11 @@
 
 **モジュールパス**はモジュールの正式名称で、モジュールの[go.modファイル](https://golang.org/ref/mod#glos-go-mod-file)内で[`module`ディレクティブ](https://golang.org/ref/mod#go-mod-file-module)を使って宣言されます。モジュールのパスは、そのモジュール内に含まれるパッケージのプレフィックスです。
 
-モジュールパスは、そのモジュールが何をするのか、そしてどこにあるのかを説明しなければなりません。通常、モジュールパスは、リポジトリルートパス、リポジトリ内のディレクトリ（通常は空）、メジャーバージョンのサフィックス（メジャーバージョン2以上の場合のみ）で構成されています。
+モジュールパスは、そのモジュールが何をするのか、そしてどこにあるのかを説明しなければなりません。通常、モジュールパスは、リポジトリルートパス、リポジトリ内のディレクトリ（通常は空）、メジャーバージョンサフィックス（メジャーバージョン2以上の場合のみ）で構成されています。
 
 - **リポジトリルートパス**は、モジュールパスのうち、そのモジュールが開発されているバージョンコントロールリポジトリのルートディレクトリに対応しています。ほとんどのモジュールは、そのリポジトリのルートディレクトリで定義されているため、通常そのパスは全体のパスとなります。例えば、`golang.org/x/net`は同名のモジュールに対するリポジトリルートパスです。`go`コマンドがモジュールパスを元にしてHTTPリクエストでリポジトリを検索する方法については、[Finding a repository for a module path](https://golang.org/ref/mod#vcs-find)をご覧ください。
-- モジュールがリポジトリのルートディレクトリ定義されていない場合、**モジュールサブディレクトリ**はモジュールパスの中のディレクトリ名の部分にあたり、メジャーバージョンのサフィックスは含みません。これはセマンティックバージョンタグのプレフィックスとしても機能します。例えば、モジュール`golang.org/x/tools/gopls`は`golang.org/x/tools`をルートとするリポジトリのサブディレクトリ`gopls`にあるので、モジュールサブディレクトリ`gopls`を持っています。[Mapping versions to commits](https://golang.org/ref/mod#vcs-version)や[Module directories within a repository](https://golang.org/ref/mod#vcs-dir)をご覧ください。
-- モジュールがメジャーバージョン2以上でリリースされている場合、モジュールパスは`/v2`のようなメジャーバージョンのサフィックスで終わらなければなりません。これはサブディレクトリ名の一部であってもなくてもどちらでも構いません。例えば、`golang.org/x/repo/sub/v2`というパスのモジュールは、リポジトリ`golang.org/x/repo`のサブディレクトリ`/sub`または`/sub/v2`にあります。
+- モジュールがリポジトリのルートディレクトリ定義されていない場合、**モジュールサブディレクトリ**はモジュールパスの中のディレクトリ名の部分にあたり、メジャーバージョンサフィックスは含みません。これはセマンティックバージョンタグのプレフィックスとしても機能します。例えば、モジュール`golang.org/x/tools/gopls`は`golang.org/x/tools`をルートとするリポジトリのサブディレクトリ`gopls`にあるので、モジュールサブディレクトリ`gopls`を持っています。[Mapping versions to commits](https://golang.org/ref/mod#vcs-version)や[Module directories within a repository](https://golang.org/ref/mod#vcs-dir)をご覧ください。
+- モジュールがメジャーバージョン2以上でリリースされている場合、モジュールパスは`/v2`のようなメジャーバージョンサフィックスで終わらなければなりません。これはサブディレクトリ名の一部であってもなくてもどちらでも構いません。例えば、`golang.org/x/repo/sub/v2`というパスのモジュールは、リポジトリ`golang.org/x/repo`のサブディレクトリ`/sub`または`/sub/v2`にあります。
 
 あるモジュールが他のモジュールに依存している可能性がある場合、`go`コマンドがそのモジュールを見つけてダウンロードできるように、以上のルールに従う必要があります。また、モジュールパスで使用できる文字には、いくつかの[制限](https://golang.org/ref/mod#go-mod-file-ident)があります。
 
@@ -80,23 +80,23 @@ go get -d example.com/mod@master
 go list -m -json example.com/mod@abcd1234
 ```
 
-### メジャーバージョンのサフィックス
+### メジャーバージョンサフィックス
 
 メジャーバージョン2以降、モジュールパスは`/v2`のようなメジャーバージョンに対応したサフィックスが必要です。例えば、`v1.0.0`で`example.com/mod`というパスを持つモジュールは、`v2.0.0`では`example.com/mod/v2`というパスを持つ必要があります。
 
-メジャーバージョンのサフィックスは、[mport compatibility rule](https://research.swtch.com/vgo-import)を満たしています。
+メジャーバージョンサフィックスは、[import compatibility rule](https://research.swtch.com/vgo-import)を満たしています。
 
 > 古いパッケージと新しいパッケージのインポートパスが同じ場合、新しいパッケージは古いパッケージとの後方互換性がなければなりません。
 
-定義上、新しいメジャーバージョンのモジュールが持つパッケージは、それより前のメジャーバージョンの対応するパッケージとの後方互換性はありません。そのため、`v2`以降のパッケージには新しいインポートパスが必要になります。これは、モジュールパスにメジャーバージョンのサフィックスを追加することで実現しています。モジュールパスは、モジュールが持つ各パッケージのインポートパスのプレフィックスにあたるため、モジュールパスにメジャーバージョンのサフィックスを追加することで、互換性のないバージョンごとに異なるインポートパスを提供できます。
+定義上、新しいメジャーバージョンのモジュールが持つパッケージは、それより前のメジャーバージョンの対応するパッケージとの後方互換性はありません。そのため、`v2`以降のパッケージには新しいインポートパスが必要になります。これは、モジュールパスにメジャーバージョンサフィックスを追加することで実現しています。モジュールパスは、モジュールが持つ各パッケージのインポートパスのプレフィックスにあたるため、モジュールパスにメジャーバージョンサフィックスを追加することで、互換性のないバージョンごとに異なるインポートパスを提供できます。
 
-メジャーバージョンのサフィックスは、メジャーバージョン`v0`や`v1`では使用できません。`v0`は不安定で互換性が保証されてないため、`v0`と`v1`の間でモジュールパスを変更する必要はありません。さらに、ほとんどのモジュールにおいて、`v1`は`v0`の最後のバージョンと後方互換性があります。`v1`は`v0`に対して互換性のない変更があることを示すのではなく、互換性を約束するという意味を持ちます。
+メジャーバージョンサフィックスは、メジャーバージョン`v0`や`v1`では使用できません。`v0`は不安定で互換性が保証されてないため、`v0`と`v1`の間でモジュールパスを変更する必要はありません。さらに、ほとんどのモジュールにおいて、`v1`は`v0`の最後のバージョンと後方互換性があります。`v1`は`v0`に対して互換性のない変更があることを示すのではなく、互換性を約束するという意味を持ちます。
 
-特別なケースとして、`gopkg.in/`で始まるモジュールパスは、`v0`や`v1`でも、常にメジャーバージョンのサフィックスを持つ決まりがあります。ただし、サフィックスはスラッシュではなくドットで始まります（例えば、`gopkg.in/yaml.v2`）。
+特別なケースとして、`gopkg.in/`で始まるモジュールパスは、`v0`や`v1`でも、常にメジャーバージョンサフィックスを持つ決まりがあります。ただし、サフィックスはスラッシュではなくドットで始まります（例えば、`gopkg.in/yaml.v2`）。
 
-メジャーバージョンのサフィックスを使うと、同じビルドに複数のメジャーバージョンのモジュールを共存させることができます。これは、[diamond dependency problem](https://research.swtch.com/vgo-import#dependency_story)を回避するために必要になります。通常、推移的依存関係によって2つの異なるバージョンでモジュールが必要とされる場合、より新しいバージョンが使用されます。しかし、2つのバージョンに互換性がない場合、どちらを選んでもすべての利用者を満足させることができません。互換性のないバージョンは異なるメジャーバージョンを持たなければならないので、メジャーバージョンのサフィックスを使って異なるモジュールパスを持たなければなりません。これによりコンフリクトが解消できます。つまり、別々のサフィックスを持つモジュールは別々のモジュールとして扱われ、それらのパッケージはたとえモジュールルートから見て同じサブディレクトリにあるパッケージだとしても、別々のものとして扱われるのです。
+メジャーバージョンサフィックスを使うと、同じビルドに複数のメジャーバージョンのモジュールを共存させることができます。これは、[diamond dependency problem](https://research.swtch.com/vgo-import#dependency_story)を回避するために必要になります。通常、推移的依存関係によって2つの異なるバージョンでモジュールが必要とされる場合、より新しいバージョンが使用されます。しかし、2つのバージョンに互換性がない場合、どちらを選んでもすべての利用者を満足させることができません。互換性のないバージョンは異なるメジャーバージョンを持たなければならないので、メジャーバージョンサフィックスを使って異なるモジュールパスを持たなければなりません。これによりコンフリクトが解消できます。つまり、別々のサフィックスを持つモジュールは別々のモジュールとして扱われ、それらのパッケージはたとえモジュールルートから見て同じサブディレクトリにあるパッケージだとしても、別々のものとして扱われるのです。
 
-多くのGoプロジェクトは、モジュールに移行する前（あるいはモジュールが導入される前）に、メジャーバージョンのサフィックスを使わずに`v2`以上のバージョンをリリースしています。これらのバージョンには、ビルドタグ`+incompatible`がつけられています（例えば、`v2.0.0+incompatible`）。詳しくは[Compatibility with non-module repositories](https://golang.org/ref/mod#non-module-compat)をご覧ください。
+多くのGoプロジェクトは、モジュールに移行する前（あるいはモジュールが導入される前）に、メジャーバージョンサフィックスを使わずに`v2`以上のバージョンをリリースしています。これらのバージョンには、ビルドタグ`+incompatible`がつけられています（例えば、`v2.0.0+incompatible`）。詳しくは[Compatibility with non-module repositories](https://golang.org/ref/mod#non-module-compat)をご覧ください。
 
 ### パッケージからモジュールに解決する
 
@@ -140,10 +140,10 @@ go list -m -json example.com/mod@abcd1234
 [メインモジュール](https://golang.org/ref/mod#glos-main-module)と同義です。
 
 ### 非推奨のモジュール（deprecated module）
-製作者によってサポートされなくなったモジュール（ただし、メジャーバージョンはこの目的のために別のモジュールとみなされます）。非推奨のモジュールには、最新版の[`go.mod`ファイル](https://golang.org/ref/mod#glos-go-mod-file)に[非推奨のコメント](https://golang.org/ref/mod#go-mod-file-module-deprecation)がつけられます。
+製作者によってサポートされなくなったモジュールです（ただし、メジャーバージョンはこの目的のために別のモジュールとみなされます）。非推奨のモジュールには、最新版の[`go.mod`ファイル](https://golang.org/ref/mod#glos-go-mod-file)に[非推奨のコメント](https://golang.org/ref/mod#go-mod-file-module-deprecation)がつけられます。
 
 ### `go.mod`ファイル（`go.mod` file）
-モジュールのパス、必須のモジュール、その他のメタデータを定義するファイル。[モジュールルートディレクトリ](https://golang.org/ref/mod#glos-module-root-directory)に配置されます。[`go.mod`ファイル](https://golang.org/ref/mod#go-mod-file)の項をご覧ください。
+モジュールのパス、必須のモジュール、その他のメタデータを定義するファイルです。[モジュールルートディレクトリ](https://golang.org/ref/mod#glos-module-root-directory)に配置されます。[`go.mod`ファイル](https://golang.org/ref/mod#go-mod-file)の項をご覧ください。
 
 ### インポートパス（import path）
 Goのソースファイルでパッケージをインポートするために使われる文字列です。[パッケージパス](https://golang.org/ref/mod#glos-package-path)と同義です。
@@ -152,47 +152,70 @@ Goのソースファイルでパッケージをインポートするために使
 `go`コマンドが実行されるモジュールです。メインモジュールは、カレントディレクトリまたは親ディレクトリにある[`go.mod`ファイル](https://golang.org/ref/mod#glos-go-mod-file)で定義されます。[モジュール、パッケージ、バージョン](https://golang.org/ref/mod#modules-overview)をご覧ください。
 
 ### メジャーバージョン（major version）
+セマンティックバージョンの最初の数字です（`v1.2.3`の`1`）。互換性のない変更のあるリリースでは、メジャーバージョンをインクリメントし、マイナーバージョンとパッチバージョンを0にしなければなりません。メジャーバージョンが0のセマンティックバージョンは、不安定とみなされます。
 
 ### メジャーバージョンのサブディレクトリ（major version subdirectory）
+モジュールの[major version suffix](https://golang.org/ref/mod#glos-major-version-suffix)と一致するバージョンコントロールリポジトリ内のサブディレクトリで、モジュールを定義することができます。例えば、[root path](https://golang.org/ref/mod#glos-repository-root-path)が`example.com/mod`であるリポジトリのモジュール`example.com/mod/v2`は、リポジトリルートディレクトリやメジャーバージョンのサブディレクトリ`v2`に定義することができます。[Module directories within a repository](https://golang.org/ref/mod#vcs-dir)をご覧ください。
 
-### メジャーバージョンのサフィックス（major version suffix）
+### メジャーバージョンサフィックス（major version suffix）
+メジャーバージョンの数字と一致するモジュールパスのサフィックスです。例えば、`example.com/mod/v2`の`/v2`です。メジャーバージョンサフィックスは、`v2.0.0`以降では必須であり、それ以前のバージョンでは使用できません。[Major version suffixes](https://golang.org/ref/mod#major-version-suffixes)をご覧ください。
 
 ### minimal version selection (MVS)
+ビルドで使用されるすべてのモジュールのバージョンを決定するアルゴリズムです。詳しくは、[Minimal version selection](https://golang.org/ref/mod#minimal-version-selection)をご覧ください。
 
 ### マイナーバージョン（minor version）
+セマンティックバージョンの2番目の数字です（`v1.2.3`の`2`）。後方互換性のある新機能をリリースする際は、マイナーバージョンをインクリメントし、パッチバージョンを0にする必要があります。
 
 ### モジュール（module）
+リリースされ、バージョン管理され、ひとまとまりで配布されるパッケージの集合体のこと。
 
 ### モジュールキャッシュ（module cache）
+ダウンロードしたモジュールを保存するローカルディレクトリで、`GOPATH/pkg/mod`にあります。[Module cache](https://golang.org/ref/mod#module-cache)をご覧ください。
 
 ### モジュールグラフ（module graph）
+[main module](https://golang.org/ref/mod#glos-main-module)をルートとする必須モジュールの有向グラフ。グラフの各頂点はモジュールで、各辺は`go.mod`ファイル中の`require`文を元にしたバージョンです（メインモジュールの`go.mod`ファイル中の`replace`文と`exclude`文に従う）。
 
 ### モジュールパス（module path）
+モジュールを識別したり、そのモジュール内のパッケージインポートパスのプレフィクスとして機能したりするパス。例えば、`"golang.org/x/net"`のようになります。
 
 ### モジュールプロキシ（module proxy）
+[`GOPROXY` protocol](https://golang.org/ref/mod#goproxy-protocol)を実装したWebサーバです。`go`コマンドは、モジュールプロキシからバージョン情報、`go.mod`ファイル、zip化されたモジュールのファイルをダウンロードします。
 
 ### モジュールルートディレクトリ（module root directory）
+モジュールを定義する`go.mod`ファイルを含むディレクトリです。
 
 ### モジュールサブディレクトリ（module subdirectory）
+[module path](https://golang.org/ref/mod#glos-module-path)のうち、[repository root path](https://golang.org/ref/mod#glos-repository-root-path)の後の部分で、モジュールが定義されているサブディレクトリを示します。空でない場合、モジュールサブディレクトリは[semantic version tags](https://golang.org/ref/mod#glos-semantic-version-tag)のプレフィックスにもなります。モジュールが[major version subdirectory](https://golang.org/ref/mod#glos-major-version-subdirectory)にあっても、[major version suffix](https://golang.org/ref/mod#glos-major-version-suffix)があれば、モジュールサブディレクトリはメジャーバージョンサフィックスを含みません。[Module paths](https://golang.org/ref/mod#module-path)をご覧ください。
 
 ### パッケージ（package）
+同じディレクトリにあるソースファイルの集まりで、一緒にコンパイルされます。Go Language Specificationの[Packagesのセクション](https://golang.org/ref/spec#Packages)をご覧ください。
 
 ### パッケージパス（package path）
+パッケージを一意に識別するためのパスです。パッケージパスは、モジュールパスとそのモジュール内のサブディレクトリを結合したパスです。例えば、`"golang.org/x/net/html"`はモジュール`"golang.org/x/net"`のサブディレクトリ`"html"`にあるパッケージのパッケージパスです。[import path](https://golang.org/ref/mod#glos-import-path)と同義語です。
 
 ### パッチバージョン（patch version）
+セマンティックバージョンの3番目の数字です（`v1.2.3`の`3`）。モジュールの公開インターフェースに変更がないリリースでは、パッチバージョンをインクリメントする必要がります。
 
 ### プレリリースバージョン（pre-release version）
+パッチバージョンの直後にダッシュが続くバージョンです。プレリリースバージョンは不安定とみなされ、ほかのバージョンとの互換性は想定されていません。プレリリースバージョンは、対応するリリースバージョンより前のバージョンです。すなわち、`v1.2.3-pre`は`v1.2.3`よりも前のバージョンです。[release version](https://golang.org/ref/mod#glos-release-version)もあわせてご覧ください。
 
 ### 疑似バージョン（pseudo-version）
+バージョンコントロールシステムから取得したリビジョン識別子（Gitのコミットハッシュなど）とエンコードされたタイムスタンプを用いるバージョンです。例えば、`v0.0.0-20191109021931-daa7c04131f5`のようになります。モジュールを持たないリポジトリとの互換性や、タグつきバージョンが利用できない場合などに使用します。
 
 ### リリースバージョン（release version）
+プレリリースのプレフィックスがついていないバージョンです。例えば、`v1.2.3-pre`ではなく`v1.2.3`です。[pre-release version](https://golang.org/ref/mod#glos-pre-release-version)もあわせてご覧ください。
 
 ### リポジトリルートパス（repository root path）
+モジュールパスのうち、バージョンコントロールリポジトリのルートディレクトリに対応する部分です。[Module paths](https://golang.org/ref/mod#module-path)をご覧ください。
 
 ### 廃止バージョン（retracted version）
+公開前だったり、公開後に重大な問題が発見されたりされ、依存すべきではないバージョンのことです。[`retract` directive](https://golang.org/ref/mod#go-mod-file-retract)をご覧ください。
 
 ### セマンティックバージョンタグ（semantic version tag）
+[version](https://golang.org/ref/mod#glos-version)を明示したリビジョンに関連付けるバージョンコントロールリポジトリのタグです。[Mapping versions to commits](https://golang.org/ref/mod#vcs-version)をご覧ください。
 
 ### ベンダーディレクトリ（vendor direstory）
+メインモジュールのパッケージをビルドするために必要なほかのパッケージを格納する`vendor`という名前のディレクトリです。[`go mod vendor`](https://golang.org/ref/mod#go-mod-vendor)で管理されています。[Vendoring](https://golang.org/ref/mod#vendoring)をご覧ください。
 
 ### バージョン（version）
+モジュールの不変的なスナップショットを示す識別子で、`v`の後にセマンティックバージョンを続けて記述します。[Versions](https://golang.org/ref/mod#versions)をご覧ください。
